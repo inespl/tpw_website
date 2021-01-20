@@ -7,7 +7,7 @@
           <h4 *ngIf="action === 'edit'">Edit Comment</h4>
           <h4 *ngIf="action !== 'edit'">Add Comment</h4>
           <hr/>
-          <div class="form-group" *ngIf="action === 'edit'">
+          <div class="form-group" *ngIf="action === 'edit' && comment">
             <div class="row">
               <div class="col-md-3">
                 Item:

@@ -29,15 +29,14 @@ export class AddAndEditCommentComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.token = localStorage.getItem('username');
+    this.token = localStorage.getItem('auth_token');
 
-    this.getProfile(this.token);
+    this.getProfile(localStorage.getItem('username'));
     this.populateItemOptions();
 
     this.getAction();
     this.getId();
     this.createCommentForm();
-    this.getComment();
 
   }
 
@@ -79,8 +78,6 @@ export class AddAndEditCommentComponent implements OnInit {
       } else if (id) {
         this.id = id;
         this.getComment();
-      } else {
-        this.createCommentForm();
       }
     });
   }
@@ -97,26 +94,24 @@ export class AddAndEditCommentComponent implements OnInit {
         text: new FormControl('', Validators.required),
         stars: new FormControl('', [Validators.required, Validators.min(0), Validators.max(5)]),
       });
+      this.getComment();
     }
   }
 
   private getComment(): void {
     if (this.id) {
-      this.userService.getCommentInfo(+this.id).subscribe(response => {
+      this.userService.getCommentInfo(this.token, +this.id).subscribe(response => {
         this.comment = response;
-        if (this.action === 'add') {
+        console.log(this.comment);
+
+        if (this.action === 'edit') {
           this.commentGroup.patchValue({
             text: this.comment.text,
             stars: this.comment.stars,
             user: this.comment.user,
           });
-        } else {
-          this.commentGroup.patchValue({
-            text: this.comment.text,
-            stars: this.comment.stars,
-          });
-          this.item.id = this.comment.item;
         }
+
       });
     }
   }

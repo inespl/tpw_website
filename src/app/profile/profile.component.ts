@@ -5,6 +5,7 @@ import { Profile } from '../models/Profile';
 import { Sell } from '../models/Sell';
 import { Purchase } from '../models/Purchase';
 import {UserService} from '../services/user.service';
+import {ItemsService} from '../services/items.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +20,7 @@ export class ProfileComponent implements OnInit {
   token: string;
   profileId: number;
 
-  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private itemService: ItemsService) { }
 
   ngOnInit(): void {
     this.token = localStorage.getItem('username');
@@ -39,14 +40,15 @@ export class ProfileComponent implements OnInit {
     this.profileId = this.profile.id;
     this.userService.getComments().subscribe(response => {
       this.comments = response.filter(i => i.user === this.profile.user.id);
+      this.fillItems(this.comments);
     });
   }
 
  private getPurchases(token: string): void {
     this.profileId = this.profile.id;
     this.userService.getPurchases().subscribe(response => {
-      console.log(response);
-      this.purchases = response.filter(i => i.user === this.profile.user);
+      this.purchases = response.filter(i => i.user === this.profile.user.id);
+      this.fillItems(this.purchases);
     });
   }
 
@@ -61,5 +63,13 @@ export class ProfileComponent implements OnInit {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('username');
     this.router.navigateByUrl('/');
+  }
+
+  private fillItems(fillList): void {
+    this.itemService.getItems().subscribe(response => {
+      for (const c of fillList) {
+        c.item = response.find(i => i.id === c.item);
+      }
+    });
   }
 }

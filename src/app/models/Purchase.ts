@@ -5,6 +5,6 @@ export class Purchase {
   id: number;
   item: Item;
   price: number;
-  user: User;
+  user: any;
   discountedP: boolean;
 }

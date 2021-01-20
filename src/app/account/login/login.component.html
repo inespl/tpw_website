@@ -46,6 +46,7 @@
             <br>
             <input type="password" id="password" formControlName="password">
           </div>
+          <p *ngIf="loginError" style="color: red">{{loginError}}</p>
 
           <div class="form-group">
             <button class="btn btn-secondary" (click)="login()">Log in</button>

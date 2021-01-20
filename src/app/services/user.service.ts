@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import { Profile } from '../models/Profile';
 import { Comments } from '../models/Comments';
 import {Purchase} from '../models/Purchase';
 import {Sell} from '../models/Sell';
 import {Item} from '../models/Item';
 import {Category} from '../models/Category';
+import {catchError} from 'rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -24,7 +25,11 @@ export class UserService {
   login(username: string, password: string): Observable<any> {
     const url = this.apiURL + 'login';
     const body = {username, password};
-    return this.http.post(url, body, httpOptions);
+    return this.http.post(url, body, httpOptions).pipe(
+        catchError((err) => {
+          return throwError(err);
+        })
+    );
   }
 
   register(profile: Profile): Observable<any> {
@@ -64,9 +69,10 @@ export class UserService {
     return this.http.get<Item[]>(url);
   }
 
-  getCommentInfo(commentId: number): Observable<Comments> {
+  getCommentInfo(token: string, commentId: number): Observable<Comments> {
     const url = this.apiURL + 'comment/' + commentId;
-    return this.http.get<Comments>(url);
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    return this.http.get<Comments>(url, headers);
   }
 
   addComment(comment: Comments): Observable<any> {
@@ -82,7 +88,7 @@ export class UserService {
   }
 
   deleteComment(commentId: number): Observable<any> {
-    const url = this.apiURL + 'comment/' + commentId + '/delete';
+    const url = this.apiURL + 'comment/' + commentId + '/delete/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
     return this.http.delete(url, headers);
   }

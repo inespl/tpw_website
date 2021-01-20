@@ -12,6 +12,7 @@ export class LoginComponent implements OnInit {
   errorMsg: string;
   loginGroup: FormGroup;
   token: string;
+  loginError: string;
 
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router) { }
 
@@ -30,11 +31,14 @@ export class LoginComponent implements OnInit {
 
     const username = this.loginGroup.value.username;
     const password = this.loginGroup.value.password;
-    this.userService.login(username, password).subscribe(response => {
+    this.userService.login(username, password).subscribe((response) => {
       this.token = response.token;
+      this.loginError = null;
       localStorage.setItem('auth_token', this.token);
       localStorage.setItem('username', username);
       this.router.navigateByUrl('/');
+    }, (error) => {
+      this.loginError = 'Something went wrong there. Please check your credentials and try again';
     });
   }
 
