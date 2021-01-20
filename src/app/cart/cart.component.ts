@@ -65,7 +65,11 @@ export class CartComponent implements OnInit {
 
   private getTotal(): void {}
 
-  removeItem(orderId: number): void {}
+  removeItem(orderId: number): void {
+    this.itemService.removeOrderItem(this.token, orderId).subscribe(response => {
+      this.orderedItems = this.orderedItems.filter(i => i.id !== orderId);
+    });
+  }
 
   decreaseOrderQty(orderId: number): void {}
 
