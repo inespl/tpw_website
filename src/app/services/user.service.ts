@@ -17,7 +17,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class UserService {
-  private apiURL = 'https://http://dgmorais.pythonanywhere.com/api/';
+  private apiURL = 'https://dgmorais.pythonanywhere.com/api/';
 
   constructor(private http: HttpClient) {
   }
