@@ -18,7 +18,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class ItemsService {
-  private apiURL = 'http://localhost:8000/api/';
+  private apiURL = 'https://http://dgmorais.pythonanywhere.com/api/';
 
   constructor(private http: HttpClient) { }
 
