@@ -29,7 +29,9 @@ export class NavbarComponent implements OnInit {
     });
     this.getCategories();
     this.username = localStorage.getItem('username');
-    this.getProfile();
+    if (this.username) {
+      this.getProfile();
+    }
   }
 
   search(): void {

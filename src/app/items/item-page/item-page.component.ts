@@ -91,7 +91,6 @@ export class ItemPageComponent implements OnInit {
     this.sell.moneyReceived = this.item.sellMoney;
     this.sell.pendingSell = true;
     this.sell.accepted = false;
-    console.log(this.sell.item);
     this.itemService.sellItem(this.token, this.sell).subscribe(response => {
       this.router.navigateByUrl('/account');
     });
@@ -102,7 +101,6 @@ export class ItemPageComponent implements OnInit {
       for (const c of this.comments) {
         c.user = response.find(i => i.user.id === c.user).user;
       }
-      console.log(this.comments);
     });
 
   }

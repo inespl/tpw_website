@@ -56,14 +56,27 @@ export class CartComponent implements OnInit {
   }
 
   private fillItems(): void {
+    this.subtotal = 0;
     this.itemService.getItems().subscribe(response => {
-      for (const oItem of this.orderedItems ) {
+      for (const oItem of this.orderedItems) {
         oItem.item = response.find(i => i.id === oItem.item);
       }
+      this.getTotal();
     });
   }
 
-  private getTotal(): void {}
+  private getTotal(): void {
+    for (const order of this.orderedItems) {
+      this.subtotal += (order.item.price - ((order.item.price * order.item.discount) / 100)) * order.qty;
+    }
+    this.total = this.subtotal;
+    if (this.profile.money >= this.subtotal) {
+      this.total = 0;
+    }
+    if (this.profile.money < this.subtotal) {
+      this.total = this.subtotal - this.profile.money;
+    }
+  }
 
   removeItem(orderId: number): void {
     this.itemService.removeOrderItem(this.token, orderId).subscribe(response => {
@@ -71,10 +84,42 @@ export class CartComponent implements OnInit {
     });
   }
 
-  decreaseOrderQty(orderId: number): void {}
+  decreaseOrderQty(orderId: number): void {
+    const updateOrder = this.orderedItems.find(i => i.id === orderId);
+    const index = this.orderedItems.indexOf(updateOrder);
+    this.orderedItems[index].qty -= 1;
+    this.orderedItems[index].item = this.orderedItems[index].item.id;
+    this.itemService.updateOrderItem(orderId, updateOrder).subscribe(response => {
+      this.getOrderItems();
+    });
+  }
 
-  increaseOrderQty(orderId: number): void {}
+  increaseOrderQty(orderId: number): void {
+    const updateOrder = this.orderedItems.find(i => i.id === orderId);
+    const index = this.orderedItems.indexOf(updateOrder);
+    this.orderedItems[index].qty += 1;
+    this.orderedItems[index].item = this.orderedItems[index].item.id;
+    this.itemService.updateOrderItem(orderId, updateOrder).subscribe(response => {
+      this.getOrderItems();
+    });
+  }
 
-  purchaseCart(): void{}
+  purchaseCart(): void {
+    for (const order of this.orderedItems) {
+      // order.item = order.item.id;
+
+      this.itemService.purchaseItem(this.token, order.item).subscribe(response => {
+        this.itemService.deleteOrderItem(order.id).subscribe();
+      });
+    }
+    this.profile.money = 0;
+    this.userService.updateAccount(this.profile, this.profile.id).subscribe(response => {
+      this.router.navigateByUrl('/');
+    });
+  }
+
+
+
+
 
 }
