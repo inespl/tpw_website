@@ -1,0 +1,278 @@
+<script src="node_modules/chart.js/Chart.min.js"></script>
+<script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <button class="btn btn-sm btn-dark" id="menu-toggle" (click)="toggleFunction()">Menu</button>
+  <a class="navbar-brand" routerLink="/admin/" style="padding-left: 1%;">Admin Site</a>
+</nav>
+<div class="d-flex" id="wrapper">
+
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="list-group list-group-flush">
+      <a routerLink="/admin" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+      <a routerLink="/admin/item" class="list-group-item list-group-item-action bg-light">Items Manager</a>
+      <a routerLink="/admin/category" class="list-group-item list-group-item-action bg-light">Category Manager</a>
+      <a routerLink="/admin/purchases" class="list-group-item list-group-item-action bg-light d-flex justify-content-between">Approve Purchases</a>
+      <a routerLink="/" class="list-group-item list-group-item-action bg-light">Back to site</a>
+      <a routerLink="/logout" class="list-group-item list-group-item-action bg-light">Log out</a>
+    </div>
+  </div>
+  <div id="page-content-wrapper">
+
+
+    <br>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="container">
+            <div class="card bg-light">
+              <div class="card-header">
+                <div class="container">
+                  <div class="row d-flex justify-content-between">
+                    Recently Added items
+                    <a routerLink="item/add/" class="btn btn-success btn-sm">Add item</a>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="overflow: auto;">
+                <table class="table table-sm table-striped">
+                  <tbody class="table-body">
+                    <tr *ngFor="let it of items">
+                      <td style="width: 90%">
+                        <div class="container">
+                          <a routerLink="/admin/item/edit/{{ it.id }}">{{ it.name }}</a>
+                          <p style="font-size: small">{{ it.insertDate }}</p>
+                        </div>
+                      </td>
+                      <td style="width: 10%">
+                        <a routerLink="/admin/item/{{ it.id }}/delete">
+                          <i class="material-icons" style="margin-top: 20%">delete</i>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="container">
+            <div class="card bg-light">
+              <div class="card-header">
+                <div class="container">
+                  <div class="row d-flex justify-content-between">
+                    Categories
+                    <a routerLink="category/" class="btn btn-success btn-sm">See all</a>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="overflow: auto">
+                <table class="table table-sm table-striped">
+                  <tbody>
+                    <tr *ngFor="let cat of category">
+                      <td>
+                        <div class="container">
+                          <a routerLink="/admin/category/edit/{{ cat.id }}">{{ cat.name }}</a><br>
+                          <span style="font-size: small">Subcategories: {{ cat.subcategories.length }}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <br>
+          </div>
+          <div class="container">
+            <div class="card bg-light">
+              <div class="card-header">
+                <div class="container">
+                  <div class="row d-flex justify-content-between">
+                    Pending Purchases
+                    <a routerLink="purchases/" class="btn btn-success btn-sm">See all</a>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="overflow: auto">
+                <table class="table table-sm table-striped">
+                  <tbody class="table-body">
+                    <tr *ngFor="let sell of pending">
+                      <td style="width: 100%">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-md-9">
+                              <a routerLink="/admin/purchases/{{ sell.id }}/">{{ sell.item.name }}</a><br>
+                              <span style="font-size: small">Money Received: {{ sell.moneyReceived }}€</span>
+                            </div>
+                            <div class="col-md-1">
+                              <a (click)="approve(sell.id)" style="color: green; cursor: pointer">
+                                <i class="material-icons" >done</i>
+                              </a>
+                            </div>
+                            <div class="col-md-1">
+                              <a (click)="deny(sell.id)" style="color: red; cursor: pointer;">
+                                <i class="material-icons">clear</i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="container">
+            <div class="card bg-light">
+              <div class="card-header">
+                <div class="container">
+                  <div class="row d-flex justify-content-between">
+                    Out of Stock Items
+                    <a routerLink="/admin/outofstock" class="btn btn-success btn-sm">See all</a>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body" style="overflow: auto">
+                <table class="table table-sm table-striped">
+                  <tbody class="table-body">
+                    <tr *ngFor="let item of outOfStock">
+                      <td style="width: 100%">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-md-9">
+                              <a routerLink="/admin/outofstock/{{item.id}}" >{{ item.name }}</a><br>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-12">
+          <div class="row">
+            <div class="col-md-12 col-sm-12">
+              <div class="container">
+                <div class="card bg-light" >
+                  <div class="card-header">
+                    <div class="container">
+                      <div class="row d-flex justify-content-between">
+                        Full-Price vs. Discounted
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body" style="overflow: auto">
+                    <canvas id="pieChart" style="width: 100%;"></canvas>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+
+            <div class="col-md-12 col-sm-12">
+              <div class="container">
+                <div class="card bg-light">
+                  <div class="card-header">
+                    <div class="container">
+                      <div class="row d-flex justify-content-between">
+                        Best Buyers
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body" style="overflow: auto">
+                    <table class="table table-sm table-striped">
+                      <tbody class="table-body">
+                        <tr *ngFor="let user of bestBuyers">
+                          <td>{{ bestBuyers.indexOf(user) + 1 }}</td>
+                          <td>{{ user.first_name }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+
+            <div class="col-md-12 col-sm-12">
+              <div class="container">
+                <div class="card bg-light">
+                  <div class="card-header">
+                    <div class="container">
+                      <div class="row d-flex justify-content-between">
+                        Best Sellerts
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body" style="overflow: auto">
+                    <table class="table table-sm table-striped">
+                      <tbody class="table-body">
+                        <tr *ngFor="let user of bestBuyers">
+                          <td>{{ bestBuyers.indexOf(user) + 1 }}</td>
+                          <td>{{ user.first_name }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-8">
+          <div class="row">
+
+            <div class="col-md-12 col-sm-12">
+              <div class="container">
+                <div class="card bg-light">
+                  <div class="card-header">
+                    <div class="container">
+                      <div class="row d-flex justify-content-between">
+                        Purchases per Age Group
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body" style="overflow: auto">
+                    <canvas id="barChart" style="width: 100%;"></canvas>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+
+            <div class="col-md-12 col-sm-12" >
+              <div class="container">
+                <div class="card bg-light" >
+                  <div class="card-header">
+                    <div class="container">
+                      <div class="row d-flex justify-content-between">
+                        Sells per category
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body" style="overflow: auto">
+                    <canvas id="catChart" style="width: 100%;"></canvas>
+                  </div>
+                </div>
+              </div>
+              <br>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

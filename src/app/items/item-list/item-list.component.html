@@ -1,0 +1,150 @@
+<app-navbar></app-navbar>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-2">
+
+      <div class="container filter-tab">
+        <br>
+        <a (click)="clear()" style="cursor: pointer">Clear</a>
+        <section>
+          <div class="container">
+            <form id="filters" [formGroup]="filterGroup">
+              <div class="form-group">
+                <label for="order">Sort by:</label>
+                <div>
+                  <select id="order" formControlName="order" class="form-control">
+                    <option [ngValue]="null">Sorting order</option>
+                    <option *ngFor="let order of sortChoices" value="{{order.value}}">{{order.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="min">Min price:</label>
+                <div class="d-flex">
+                  <input type="number" id="min" formControlName="min" min="0.01" class="form-control">
+                  <span style="margin: 6px 10px">€</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="max">Max price:</label>
+                <div class="d-flex">
+                  <input type="number" id="max" formControlName="max" class="form-control">
+                  <span style="margin: 6px 10px">€</span>
+                </div>
+              </div>
+              <div class="form-group" id="brands">
+                <label for="brand">Brand:</label>
+                <div>
+                  <select id="brand" formControlName="brand" class="form-control">
+                    <option [ngValue]="null">Select brand</option>
+                    <option *ngFor="let brand of brandList" value="{{brand}}">{{brand}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="availability">Availability:</label>
+                <div>
+                  <select id="availability" formControlName="availability" class="form-control">
+                    <option [ngValue]="null">Select availability</option>
+                    <option value="1">Available</option>
+                    <option value="2">Not available</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="discount">Discount:</label>
+                <div>
+                  <select id="discount" formControlName="discount" class="form-control">
+                    <option [ngValue]="null">Select discount</option>
+                    <option value="1">Discounted</option>
+                    <option value="2">Not discounted</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reviews">Reviews:</label>
+                <div>
+                  <select id="reviews" formControlName="reviews" class="form-control">
+                    <option [ngValue]="null">Select Rating</option>
+                    <option *ngFor="let rating of ratingList" value="{{rating.value}}">{{rating.name}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-dark" style="width: 100%" (click)="filter()">Apply</button>
+            </form>
+          </div>
+        </section>
+      </div>
+
+
+      <!--{# Filter sidebar #}
+      {% include 'Items/filters_sidebar.html' %}-->
+    </div>
+    <div class="col-lg-10">
+      <br>
+      <h3>{{ title }}</h3>
+      <section class="text-center mb-4">
+        <p *ngIf="!items || items.length == 0">No items to show here</p>
+        <div class="row wow fadeIn ">
+          <div class="col-lg-3 col-md-6 mb-4 item" *ngFor="let item of items">
+            <div class="card">
+              <a routerLink="/item/{{item.id}}">
+                <div class="view overlay">
+                  <img class="card-img-top" src="{{ item.picture }}">
+                  <a>
+                    <div class="mask rgba-white-slight"></div>
+                  </a>
+                  <span *ngIf="isNew(item)" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+                  <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
+                </div>
+              </a>
+              <div class="card-body text-center">
+
+                <h5>
+                  <strong>
+                    <a class="dark-grey-text"
+                       routerLink="/item/{{item.id}}">{{ item.name }} </a>
+                  </strong>
+                </h5>
+
+                <h4 class="blue-text">
+                  <div *ngIf="item.discount != 0">
+                    <strong>{{ ((100 - item.discount) * item.price / 100).toFixed(2)  }}€</strong> <del>{{ item.price }}€</del>
+                  </div>
+                  <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
+                </h4>
+                <span class="category-link"><a
+                  routerLink="/items/category/{{item.category}}">{{ item.category }}</a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section *ngIf="items.length > 0">
+        <!-- Pagination -->
+        <div class="text-center" style="width: 100%;">
+          <div class="row">
+            <div class="col-5" style="text-align: right">
+              <div *ngIf="currentPage > 1">
+                <button class="btn btn-default" name="page" (click)="firstPage()">&laquo; first</button>
+                <button class="btn btn-default" name="page" (click)="previousPage()">previous</button>
+              </div>
+            </div>
+            <div class="col-2">
+              <span class="current">
+                Page {{ currentPage }} of {{ maxPage }}
+              </span>
+            </div>
+            <div class="col-5" style="text-align: left">
+              <div *ngIf="currentPage < maxPage">
+                <button class="btn btn-default" name="page" (click)="nextPage()">next</button>
+                <button class="btn btn-default" name="page" (click)="lastPage()">last &raquo;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
